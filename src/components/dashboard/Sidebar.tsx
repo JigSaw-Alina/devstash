@@ -1,32 +1,10 @@
 import Link from "next/link";
-import {
-  Code,
-  File,
-  Folder,
-  Image,
-  Layers,
-  Link as LinkIcon,
-  Settings,
-  Sparkles,
-  Star,
-  StickyNote,
-  Terminal,
-  type LucideIcon,
-} from "lucide-react";
+import { Folder, Layers, Settings, Star } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import TypeIcon from "@/components/dashboard/TypeIcon";
 import { collections, currentUser, itemTypes } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
-
-const TYPE_ICONS: Record<string, LucideIcon> = {
-  Code,
-  Sparkles,
-  Terminal,
-  StickyNote,
-  File,
-  Image,
-  Link: LinkIcon,
-};
 
 const RECENT_COLLECTIONS_LIMIT = 5;
 
@@ -63,22 +41,19 @@ export default function Sidebar({ collapsed = false, onNavigate }: SidebarProps)
         <section>
           {!collapsed && <SectionLabel>Types</SectionLabel>}
           <ul className="space-y-0.5">
-            {itemTypes.map((type) => {
-              const Icon = TYPE_ICONS[type.icon] ?? File;
-              return (
-                <li key={type.id}>
-                  <NavLink
-                    href={`/items/${type.name.toLowerCase()}`}
-                    label={type.name}
-                    collapsed={collapsed}
-                    onNavigate={onNavigate}
-                    icon={<Icon className="size-4 shrink-0" style={{ color: type.color }} />}
-                  >
-                    <span className="text-xs text-muted-foreground">{type.count}</span>
-                  </NavLink>
-                </li>
-              );
-            })}
+            {itemTypes.map((type) => (
+              <li key={type.id}>
+                <NavLink
+                  href={`/items/${type.name.toLowerCase()}`}
+                  label={type.name}
+                  collapsed={collapsed}
+                  onNavigate={onNavigate}
+                  icon={<TypeIcon icon={type.icon} color={type.color} className="size-4 shrink-0" />}
+                >
+                  <span className="text-xs text-muted-foreground">{type.count}</span>
+                </NavLink>
+              </li>
+            ))}
           </ul>
         </section>
 
