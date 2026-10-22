@@ -4,10 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
 
-export default function TopBar() {
+interface TopBarProps {
+  sidebarToggle: React.ReactNode;
+}
+
+export default function TopBar({ sidebarToggle }: TopBarProps) {
   return (
-    <header className="flex h-16 shrink-0 items-center gap-4 border-b border-border px-6">
-      <div className="relative w-full max-w-md">
+    <header className="flex h-16 shrink-0 items-center gap-4 border-b border-border px-4 md:px-6">
+      {sidebarToggle}
+      <div className="relative hidden w-full max-w-md sm:block">
         <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           type="search"
