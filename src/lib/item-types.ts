@@ -9,8 +9,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { itemTypes, type ItemType } from "@/lib/mock-data";
-
+// Item types store an icon name in the database; this maps that name to the icon component
 const TYPE_ICONS: Record<string, LucideIcon> = {
   Code,
   Sparkles,
@@ -23,8 +22,4 @@ const TYPE_ICONS: Record<string, LucideIcon> = {
 
 export function getTypeIcon(iconName: string): LucideIcon {
   return TYPE_ICONS[iconName] ?? File;
-}
-
-export function getItemType(typeId: string): ItemType | undefined {
-  return itemTypes.find((type) => type.id === typeId);
 }

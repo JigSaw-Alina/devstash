@@ -1,7 +1,10 @@
 import DashboardShell from "@/components/dashboard/DashboardShell";
+import { getSystemItemTypes } from "@/lib/db/item-types";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: LayoutProps<"/dashboard">) {
-  return <DashboardShell>{children}</DashboardShell>;
+  const itemTypes = await getSystemItemTypes();
+
+  return <DashboardShell itemTypes={itemTypes}>{children}</DashboardShell>;
 }

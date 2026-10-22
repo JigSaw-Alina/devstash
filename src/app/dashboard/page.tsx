@@ -4,12 +4,21 @@ import { Clock, Pin } from "lucide-react";
 import CollectionCard from "@/components/dashboard/CollectionCard";
 import ItemCard from "@/components/dashboard/ItemCard";
 import StatsCards from "@/components/dashboard/StatsCards";
+import { getSystemItemTypes } from "@/lib/db/item-types";
 import { collections, items } from "@/lib/mock-data";
+import type { ItemTypeOption } from "@/types/item-type";
 
 const RECENT_COLLECTIONS_LIMIT = 6;
 const RECENT_ITEMS_LIMIT = 10;
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const itemTypes = await getSystemItemTypes();
+  const typesByName = new Map(itemTypes.map((type) => [type.name, type]));
+  const resolveTypes = (typeIds: string[]) =>
+    typeIds
+      .map((typeId) => typesByName.get(typeId))
+      .filter((type): type is ItemTypeOption => type !== undefined);
+
   const recentCollections = collections.slice(0, RECENT_COLLECTIONS_LIMIT);
   const pinnedItems = items.filter((item) => item.isPinned);
   const recentItems = [...items]
@@ -34,7 +43,11 @@ export default function DashboardPage() {
         </div>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {recentCollections.map((collection) => (
-            <CollectionCard key={collection.id} collection={collection} />
+            <CollectionCard
+              key={collection.id}
+              collection={collection}
+              types={resolveTypes(collection.typeIds)}
+            />
           ))}
         </div>
       </section>
@@ -47,7 +60,7 @@ export default function DashboardPage() {
           </h2>
           <div className="space-y-3">
             {pinnedItems.map((item) => (
-              <ItemCard key={item.id} item={item} />
+              <ItemCard key={item.id} item={item} type={typesByName.get(item.typeId)} />
             ))}
           </div>
         </section>
@@ -60,7 +73,7 @@ export default function DashboardPage() {
         </h2>
         <div className="space-y-3">
           {recentItems.map((item) => (
-            <ItemCard key={item.id} item={item} />
+            <ItemCard key={item.id} item={item} type={typesByName.get(item.typeId)} />
           ))}
         </div>
       </section>

@@ -3,12 +3,14 @@ import { Folder, Layers, Settings, Star } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import TypeIcon from "@/components/dashboard/TypeIcon";
-import { collections, currentUser, itemTypes } from "@/lib/mock-data";
+import { collections, currentUser, items } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import type { ItemTypeOption } from "@/types/item-type";
 
 const RECENT_COLLECTIONS_LIMIT = 5;
 
 interface SidebarProps {
+  itemTypes: ItemTypeOption[];
   collapsed?: boolean;
   onNavigate?: () => void;
 }
@@ -22,7 +24,11 @@ function getInitials(name: string) {
     .toUpperCase();
 }
 
-export default function Sidebar({ collapsed = false, onNavigate }: SidebarProps) {
+function countItemsByType(typeName: string) {
+  return items.filter((item) => item.typeId === typeName).length;
+}
+
+export default function Sidebar({ itemTypes, collapsed = false, onNavigate }: SidebarProps) {
   const favoriteCollections = collections.filter((c) => c.isFavorite);
   const recentCollections = collections
     .filter((c) => !c.isFavorite)
@@ -44,13 +50,13 @@ export default function Sidebar({ collapsed = false, onNavigate }: SidebarProps)
             {itemTypes.map((type) => (
               <li key={type.id}>
                 <NavLink
-                  href={`/items/${type.name.toLowerCase()}`}
-                  label={type.name}
+                  href={`/items/${type.slug}`}
+                  label={type.label}
                   collapsed={collapsed}
                   onNavigate={onNavigate}
                   icon={<TypeIcon icon={type.icon} color={type.color} className="size-4 shrink-0" />}
                 >
-                  <span className="text-xs text-muted-foreground">{type.count}</span>
+                  <span className="text-xs text-muted-foreground">{countItemsByType(type.name)}</span>
                 </NavLink>
               </li>
             ))}

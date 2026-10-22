@@ -2,17 +2,15 @@ import { MoreHorizontal, Star } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import TypeIcon from "@/components/dashboard/TypeIcon";
-import { getItemType } from "@/lib/item-types";
 import type { Collection } from "@/lib/mock-data";
+import type { ItemTypeOption } from "@/types/item-type";
 
 interface CollectionCardProps {
   collection: Collection;
+  types: ItemTypeOption[];
 }
 
-export default function CollectionCard({ collection }: CollectionCardProps) {
-  const types = collection.typeIds
-    .map(getItemType)
-    .filter((type) => type !== undefined);
+export default function CollectionCard({ collection, types }: CollectionCardProps) {
   const accentColor = types[0]?.color;
 
   return (

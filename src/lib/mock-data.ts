@@ -6,15 +6,6 @@ export interface User {
   isPro: boolean;
 }
 
-export interface ItemType {
-  id: string;
-  name: string;
-  icon: string;
-  color: string;
-  isSystem: boolean;
-  count: number;
-}
-
 export interface Collection {
   id: string;
   name: string;
@@ -47,16 +38,6 @@ export const currentUser: User = {
   image: null,
   isPro: false,
 };
-
-export const itemTypes: ItemType[] = [
-  { id: "snippet", name: "Snippets", icon: "Code", color: "#3b82f6", isSystem: true, count: 24 },
-  { id: "prompt", name: "Prompts", icon: "Sparkles", color: "#8b5cf6", isSystem: true, count: 18 },
-  { id: "command", name: "Commands", icon: "Terminal", color: "#f97316", isSystem: true, count: 15 },
-  { id: "note", name: "Notes", icon: "StickyNote", color: "#fde047", isSystem: true, count: 12 },
-  { id: "file", name: "Files", icon: "File", color: "#6b7280", isSystem: true, count: 5 },
-  { id: "image", name: "Images", icon: "Image", color: "#ec4899", isSystem: true, count: 3 },
-  { id: "link", name: "Links", icon: "Link", color: "#10b981", isSystem: true, count: 8 },
-];
 
 export const collections: Collection[] = [
   {
