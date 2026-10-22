@@ -4,22 +4,21 @@ import { Clock, Pin } from "lucide-react";
 import CollectionCard from "@/components/dashboard/CollectionCard";
 import ItemCard from "@/components/dashboard/ItemCard";
 import StatsCards from "@/components/dashboard/StatsCards";
+import { getCollectionStats, getRecentCollections } from "@/lib/db/collections";
 import { getSystemItemTypes } from "@/lib/db/item-types";
-import { collections, items } from "@/lib/mock-data";
-import type { ItemTypeOption } from "@/types/item-type";
+import { items } from "@/lib/mock-data";
 
 const RECENT_COLLECTIONS_LIMIT = 6;
 const RECENT_ITEMS_LIMIT = 10;
 
 export default async function DashboardPage() {
-  const itemTypes = await getSystemItemTypes();
+  const [itemTypes, recentCollections, collectionStats] = await Promise.all([
+    getSystemItemTypes(),
+    getRecentCollections(RECENT_COLLECTIONS_LIMIT),
+    getCollectionStats(),
+  ]);
   const typesByName = new Map(itemTypes.map((type) => [type.name, type]));
-  const resolveTypes = (typeIds: string[]) =>
-    typeIds
-      .map((typeId) => typesByName.get(typeId))
-      .filter((type): type is ItemTypeOption => type !== undefined);
 
-  const recentCollections = collections.slice(0, RECENT_COLLECTIONS_LIMIT);
   const pinnedItems = items.filter((item) => item.isPinned);
   const recentItems = [...items]
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
@@ -32,7 +31,7 @@ export default async function DashboardPage() {
         <p className="mt-1 text-muted-foreground">Your developer knowledge hub</p>
       </div>
 
-      <StatsCards />
+      <StatsCards collectionStats={collectionStats} />
 
       <section className="space-y-4">
         <div className="flex items-center justify-between">
@@ -43,11 +42,7 @@ export default async function DashboardPage() {
         </div>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {recentCollections.map((collection) => (
-            <CollectionCard
-              key={collection.id}
-              collection={collection}
-              types={resolveTypes(collection.typeIds)}
-            />
+            <CollectionCard key={collection.id} collection={collection} />
           ))}
         </div>
       </section>
