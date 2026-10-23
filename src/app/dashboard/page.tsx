@@ -5,24 +5,20 @@ import CollectionCard from "@/components/dashboard/CollectionCard";
 import ItemCard from "@/components/dashboard/ItemCard";
 import StatsCards from "@/components/dashboard/StatsCards";
 import { getCollectionStats, getRecentCollections } from "@/lib/db/collections";
-import { getSystemItemTypes } from "@/lib/db/item-types";
-import { items } from "@/lib/mock-data";
+import { getItemStats, getPinnedItems, getRecentItems } from "@/lib/db/items";
 
 const RECENT_COLLECTIONS_LIMIT = 6;
 const RECENT_ITEMS_LIMIT = 10;
 
 export default async function DashboardPage() {
-  const [itemTypes, recentCollections, collectionStats] = await Promise.all([
-    getSystemItemTypes(),
-    getRecentCollections(RECENT_COLLECTIONS_LIMIT),
-    getCollectionStats(),
-  ]);
-  const typesByName = new Map(itemTypes.map((type) => [type.name, type]));
-
-  const pinnedItems = items.filter((item) => item.isPinned);
-  const recentItems = [...items]
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-    .slice(0, RECENT_ITEMS_LIMIT);
+  const [recentCollections, collectionStats, pinnedItems, recentItems, itemStats] =
+    await Promise.all([
+      getRecentCollections(RECENT_COLLECTIONS_LIMIT),
+      getCollectionStats(),
+      getPinnedItems(),
+      getRecentItems(RECENT_ITEMS_LIMIT),
+      getItemStats(),
+    ]);
 
   return (
     <div className="mx-auto max-w-7xl space-y-10">
@@ -31,7 +27,7 @@ export default async function DashboardPage() {
         <p className="mt-1 text-muted-foreground">Your developer knowledge hub</p>
       </div>
 
-      <StatsCards collectionStats={collectionStats} />
+      <StatsCards itemStats={itemStats} collectionStats={collectionStats} />
 
       <section className="space-y-4">
         <div className="flex items-center justify-between">
@@ -55,7 +51,7 @@ export default async function DashboardPage() {
           </h2>
           <div className="space-y-3">
             {pinnedItems.map((item) => (
-              <ItemCard key={item.id} item={item} type={typesByName.get(item.typeId)} />
+              <ItemCard key={item.id} item={item} />
             ))}
           </div>
         </section>
@@ -68,7 +64,7 @@ export default async function DashboardPage() {
         </h2>
         <div className="space-y-3">
           {recentItems.map((item) => (
-            <ItemCard key={item.id} item={item} type={typesByName.get(item.typeId)} />
+            <ItemCard key={item.id} item={item} />
           ))}
         </div>
       </section>

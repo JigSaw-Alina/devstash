@@ -3,7 +3,7 @@
 
 <!-- Feature name and short description -->
 
-**Dashboard Collections** — Replace the mock collection data in the dashboard main area (the 6 recent collection cards) with real data from the Neon database via Prisma. Items underneath are not included yet.
+**Dashboard Items** — Replace the mock item data in the dashboard main area (pinned items and recent items) with real data from the Neon database via Prisma. It should look the same as it does now.
 
 ## Status
 
@@ -16,11 +16,11 @@ Completed
 
 <!-- Goals and requirements -->
 
-- Create `src/lib/db/collections.ts` with data fetching functions
-- Fetch collections directly in the server component (replace `src/lib/mock-data.ts` usage for collections)
-- Collection card border color derived from the most-used item type in that collection
-- Show small icons of all item types in that collection
-- Keep the current design
+- Create `src/lib/db/items.ts` with data fetching functions
+- Fetch items directly in the server component (replace `src/lib/mock-data.ts` usage for pinned and recent items)
+- Item card icon/border derived from the item type
+- Display item type tags and everything else currently shown on the cards
+- If there are no pinned items, don't display the pinned section
 - Update the collection stats display
 
 
@@ -28,8 +28,8 @@ Completed
 
 <!-- Any extra notes -->
 
-- Do not add the items underneath yet — that comes later
-- References: `context/features/dashboard-collections-spec.md`, `context/screenshots/dashboard-ui-main.png`, `prisma/schema.prisma`
+- Layout and design already exist — keep the current design
+- References: `context/features/dashboard-items-spec.md`, `context/screenshots/dashboard-ui-main.png`, `prisma/schema.prisma`
 
 ## History 
 
@@ -42,3 +42,4 @@ Completed
 - **Prisma + Neon PostgreSQL Setup:** Prisma 7 with Neon PostgreSQL (development branch), initial schema including NextAuth models, indexes and cascade deletes, initial migrations and a system item types seed (branch `feature/database-setup`, commit `661ef20`) — Completed
 - **Seed Data:** `prisma/seed.ts` rewritten to seed the demo user (bcryptjs-hashed password), 7 system item types, 5 collections and 18 items, safe to re-run; `scripts/test-db.ts` added to read back and verify the demo data (branch `feature/seed-data`) — Completed
 - **Dashboard Collections:** `src/lib/db/collections.ts` added; recent collection cards and collection stats now load from the database (scoped to the demo user until auth exists), with the card border color taken from the most-used item type and icons for every type in the collection (branch `feature/dashboard-collections`) — Completed
+- **Dashboard Items:** `src/lib/db/items.ts` added; pinned items, the 10 most recent items and item stats now load from the database (scoped to the demo user until auth exists), with the card icon and border color taken from the item type and the pinned section hidden when empty (branch `feature/dashboard-items`) — Completed

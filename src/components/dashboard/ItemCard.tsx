@@ -2,23 +2,22 @@ import { Pin, Star } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import TypeIcon from "@/components/dashboard/TypeIcon";
-import type { Item } from "@/lib/mock-data";
-import type { ItemTypeOption } from "@/types/item-type";
+import type { ItemSummary } from "@/types/item";
 
 interface ItemCardProps {
-  item: Item;
-  type?: ItemTypeOption;
+  item: ItemSummary;
 }
 
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString("en-US", {
+function formatDate(date: Date) {
+  return date.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     timeZone: "UTC",
   });
 }
 
-export default function ItemCard({ item, type }: ItemCardProps) {
+export default function ItemCard({ item }: ItemCardProps) {
+  const { type } = item;
 
   return (
     <Card className="border-l-4" style={{ borderLeftColor: type?.color }}>
