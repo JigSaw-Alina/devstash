@@ -10,6 +10,11 @@ export interface CollectionSummary {
   types: ItemTypeOption[];
 }
 
+export interface SidebarCollections {
+  favorites: CollectionSummary[];
+  recents: CollectionSummary[];
+}
+
 export interface CollectionStats {
   total: number;
   favorites: number;

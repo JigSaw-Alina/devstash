@@ -6,16 +6,26 @@ import { PanelLeft, X } from "lucide-react";
 import Sidebar from "@/components/dashboard/Sidebar";
 import TopBar from "@/components/dashboard/TopBar";
 import { cn } from "@/lib/utils";
+import type { SidebarCollections } from "@/types/collection";
 import type { ItemTypeOption } from "@/types/item-type";
 
 interface DashboardShellProps {
   itemTypes: ItemTypeOption[];
+  itemCountsByType: Record<string, number>;
+  collections: SidebarCollections;
   children: React.ReactNode;
 }
 
 const DESKTOP_QUERY = "(min-width: 768px)";
 
-export default function DashboardShell({ itemTypes, children }: DashboardShellProps) {
+export default function DashboardShell({
+  itemTypes,
+  itemCountsByType,
+  collections,
+  children,
+}: DashboardShellProps) {
+  const sidebarData = { itemTypes, itemCountsByType, collections };
+
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -46,7 +56,7 @@ export default function DashboardShell({ itemTypes, children }: DashboardShellPr
           isCollapsed ? "w-16" : "w-64",
         )}
       >
-        <Sidebar itemTypes={itemTypes} collapsed={isCollapsed} />
+        <Sidebar {...sidebarData} collapsed={isCollapsed} />
       </aside>
 
       {isDrawerOpen && (
@@ -66,7 +76,7 @@ export default function DashboardShell({ itemTypes, children }: DashboardShellPr
             >
               <X className="size-4" />
             </button>
-            <Sidebar itemTypes={itemTypes} onNavigate={closeDrawer} />
+            <Sidebar {...sidebarData} onNavigate={closeDrawer} />
           </aside>
         </div>
       )}

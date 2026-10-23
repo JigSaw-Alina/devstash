@@ -2,7 +2,8 @@ import { cacheLife, cacheTag } from "next/cache";
 
 import { getSystemItemTypes } from "@/lib/db/item-types";
 import { prisma } from "@/lib/prisma";
-import type { CollectionStats, CollectionSummary } from "@/types/collection";
+import type { Prisma } from "@/generated/prisma/client";
+import type { CollectionStats, CollectionSummary, SidebarCollections } from "@/types/collection";
 import type { ItemTypeOption } from "@/types/item-type";
 
 export const COLLECTIONS_CACHE_TAG = "collections";
@@ -15,11 +16,37 @@ export async function getRecentCollections(limit: number): Promise<CollectionSum
   cacheLife("minutes");
   cacheTag(COLLECTIONS_CACHE_TAG);
 
+  return findCollections({
+    where: { user: { email: DEMO_USER_EMAIL } },
+    orderBy: { updatedAt: "desc" },
+    take: limit,
+  });
+}
+
+export async function getSidebarCollections(recentLimit: number): Promise<SidebarCollections> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag(COLLECTIONS_CACHE_TAG);
+
+  const where = { user: { email: DEMO_USER_EMAIL } };
+  const [favorites, recents] = await Promise.all([
+    findCollections({ where: { ...where, isFavorite: true }, orderBy: { name: "asc" } }),
+    findCollections({
+      where: { ...where, isFavorite: false },
+      orderBy: { updatedAt: "desc" },
+      take: recentLimit,
+    }),
+  ]);
+
+  return { favorites, recents };
+}
+
+async function findCollections(
+  args: Omit<Prisma.CollectionFindManyArgs, "select">,
+): Promise<CollectionSummary[]> {
   const [collections, itemTypes] = await Promise.all([
     prisma.collection.findMany({
-      where: { user: { email: DEMO_USER_EMAIL } },
-      orderBy: { updatedAt: "desc" },
-      take: limit,
+      ...args,
       select: {
         id: true,
         name: true,

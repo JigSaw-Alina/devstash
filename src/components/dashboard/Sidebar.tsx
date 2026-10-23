@@ -1,16 +1,17 @@
 import Link from "next/link";
-import { Folder, Layers, Settings, Star } from "lucide-react";
+import { ArrowRight, Folder, Layers, Settings, Star } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import TypeIcon from "@/components/dashboard/TypeIcon";
-import { collections, currentUser, items } from "@/lib/mock-data";
+import { currentUser } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import type { SidebarCollections } from "@/types/collection";
 import type { ItemTypeOption } from "@/types/item-type";
-
-const RECENT_COLLECTIONS_LIMIT = 5;
 
 interface SidebarProps {
   itemTypes: ItemTypeOption[];
+  itemCountsByType: Record<string, number>;
+  collections: SidebarCollections;
   collapsed?: boolean;
   onNavigate?: () => void;
 }
@@ -24,15 +25,13 @@ function getInitials(name: string) {
     .toUpperCase();
 }
 
-function countItemsByType(typeName: string) {
-  return items.filter((item) => item.typeId === typeName).length;
-}
-
-export default function Sidebar({ itemTypes, collapsed = false, onNavigate }: SidebarProps) {
-  const favoriteCollections = collections.filter((c) => c.isFavorite);
-  const recentCollections = collections
-    .filter((c) => !c.isFavorite)
-    .slice(0, RECENT_COLLECTIONS_LIMIT);
+export default function Sidebar({
+  itemTypes,
+  itemCountsByType,
+  collections,
+  collapsed = false,
+  onNavigate,
+}: SidebarProps) {
 
   return (
     <div className="flex h-full flex-col">
@@ -43,7 +42,7 @@ export default function Sidebar({ itemTypes, collapsed = false, onNavigate }: Si
         {!collapsed && <span className="text-lg font-semibold">DevStash</span>}
       </div>
 
-      <nav className="flex-1 overflow-x-hidden overflow-y-auto px-2 pb-4">
+      <nav className="flex-1 overflow-x-hidden overflow-y-auto px-2 pb-4 scrollbar-thin">
         <section>
           {!collapsed && <SectionLabel>Types</SectionLabel>}
           <ul className="space-y-0.5">
@@ -56,7 +55,7 @@ export default function Sidebar({ itemTypes, collapsed = false, onNavigate }: Si
                   onNavigate={onNavigate}
                   icon={<TypeIcon icon={type.icon} color={type.color} className="size-4 shrink-0" />}
                 >
-                  <span className="text-xs text-muted-foreground">{countItemsByType(type.name)}</span>
+                  <span className="text-xs text-muted-foreground">{itemCountsByType[type.id] ?? 0}</span>
                 </NavLink>
               </li>
             ))}
@@ -70,7 +69,7 @@ export default function Sidebar({ itemTypes, collapsed = false, onNavigate }: Si
           <div className={cn(!collapsed && "ml-2 border-l border-border pl-2")}>
             {!collapsed && <SubLabel>Favorites</SubLabel>}
             <ul className="space-y-0.5">
-              {favoriteCollections.map((collection) => (
+              {collections.favorites.map((collection) => (
                 <li key={collection.id}>
                   <CollectionLink name={collection.name} collapsed={collapsed} onNavigate={onNavigate}>
                     <Star className="size-4 fill-yellow-400 text-yellow-400" />
@@ -85,15 +84,27 @@ export default function Sidebar({ itemTypes, collapsed = false, onNavigate }: Si
               <SubLabel>Recent</SubLabel>
             )}
             <ul className="space-y-0.5">
-              {recentCollections.map((collection) => (
+              {collections.recents.map((collection) => (
                 <li key={collection.id}>
                   <CollectionLink name={collection.name} collapsed={collapsed} onNavigate={onNavigate}>
-                    <span className="text-xs text-muted-foreground">{collection.itemCount}</span>
+                    <span
+                      aria-hidden
+                      className="size-2.5 rounded-full bg-muted-foreground"
+                      style={{ backgroundColor: collection.types[0]?.color }}
+                    />
                   </CollectionLink>
                 </li>
               ))}
             </ul>
           </div>
+
+          <NavLink
+            href="/collections"
+            label="View all collections"
+            collapsed={collapsed}
+            onNavigate={onNavigate}
+            icon={<ArrowRight className="size-4 shrink-0 text-muted-foreground" />}
+          />
         </section>
       </nav>
 

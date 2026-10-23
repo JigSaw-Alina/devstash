@@ -58,6 +58,21 @@ export async function getItemStats(): Promise<ItemStats> {
   return { total, favorites };
 }
 
+// Item counts keyed by item type id
+export async function getItemCountsByType(): Promise<Record<string, number>> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag(ITEMS_CACHE_TAG);
+
+  const groups = await prisma.item.groupBy({
+    by: ["typeId"],
+    where: { user: { email: DEMO_USER_EMAIL } },
+    _count: { _all: true },
+  });
+
+  return Object.fromEntries(groups.map((group) => [group.typeId, group._count._all]));
+}
+
 async function findItems(args: Omit<Prisma.ItemFindManyArgs, "select">): Promise<ItemSummary[]> {
   const [items, itemTypes] = await Promise.all([
     prisma.item.findMany({ ...args, select: ITEM_SUMMARY_SELECT }),

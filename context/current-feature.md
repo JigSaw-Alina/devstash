@@ -3,7 +3,7 @@
 
 <!-- Feature name and short description -->
 
-**Dashboard Items** — Replace the mock item data in the dashboard main area (pinned items and recent items) with real data from the Neon database via Prisma. It should look the same as it does now.
+**Stats & Sidebar** — Show the main area stats from the database instead of `src/lib/mock-data.ts`, and show the system item types and real collection data in the sidebar.
 
 ## Status
 
@@ -16,20 +16,19 @@ Completed
 
 <!-- Goals and requirements -->
 
-- Create `src/lib/db/items.ts` with data fetching functions
-- Fetch items directly in the server component (replace `src/lib/mock-data.ts` usage for pinned and recent items)
-- Item card icon/border derived from the item type
-- Display item type tags and everything else currently shown on the cards
-- If there are no pinned items, don't display the pinned section
-- Update the collection stats display
+- Display stats from database data, keeping the current design/layout
+- Display system item types in the sidebar with their icons, linking to `/items/[typename]`
+- Add a "View all collections" link under the collections list that goes to `/collections`
+- Keep the star icons for favorite collections; for recent collections, show a colored circle based on the most-used item type in that collection
+- Add the database functions to `src/lib/db/items.ts` (use `src/lib/db/collections.ts` for reference)
 
 
 ## Notes
 
 <!-- Any extra notes -->
 
-- Layout and design already exist — keep the current design
-- References: `context/features/dashboard-items-spec.md`, `context/screenshots/dashboard-ui-main.png`, `prisma/schema.prisma`
+- `src/lib/db/items.ts` already exists from the Dashboard Items feature — extend it rather than recreate it
+- References: `context/features/stats-sidebar-spec.md`, `src/lib/db/collections.ts`
 
 ## History 
 
@@ -43,3 +42,4 @@ Completed
 - **Seed Data:** `prisma/seed.ts` rewritten to seed the demo user (bcryptjs-hashed password), 7 system item types, 5 collections and 18 items, safe to re-run; `scripts/test-db.ts` added to read back and verify the demo data (branch `feature/seed-data`) — Completed
 - **Dashboard Collections:** `src/lib/db/collections.ts` added; recent collection cards and collection stats now load from the database (scoped to the demo user until auth exists), with the card border color taken from the most-used item type and icons for every type in the collection (branch `feature/dashboard-collections`) — Completed
 - **Dashboard Items:** `src/lib/db/items.ts` added; pinned items, the 10 most recent items and item stats now load from the database (scoped to the demo user until auth exists), with the card icon and border color taken from the item type and the pinned section hidden when empty (branch `feature/dashboard-items`) — Completed
+- **Stats & Sidebar:** sidebar item types (with icons, database item counts and `/items/[type]` links) and favorite/recent collections now load from the database; recent collections show a colored dot for their most-used item type, a "View all collections" link to `/collections` was added, and the sidebar got a thin themed scrollbar (branch `feature/stats-sidebar`) — Completed
